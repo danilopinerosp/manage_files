@@ -18,13 +18,20 @@ def main():
 
     for f in files:
         if os.path.isfile(os.path.join(path,f)):
+            # evaluate if is f is a file in the path
+            
             st_name = standardized_name(path, f)
             new_name = rename_file(path, f, st_name)
             cat = classify_file(f, categories)
+
+            # create the directory for the category if it does not exist
             if not os.path.isdir(os.path.join(path, cat)):
                 create_directory(path, cat)
+
             old_path = os.path.join(path, st_name)
             new_path = os.path.join(path, cat, st_name)
+
+            # Move the file to the new directory
             subprocess.run(['mv', old_path, new_path])
 
 if __name__ == "__main__":
