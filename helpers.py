@@ -18,7 +18,7 @@ def create_directory(path, name):
     """ Create a directory in path if the directory does not exist yet"""
     new_path = os.path.join(path, name)
     if not os.path.isdir(new_path):
-        subprocess.run(['mkdir', name])
+        subprocess.run(['mkdir', new_path])
 
 def create_directories(path):
     """ Create the directories to classify the files"""
@@ -36,16 +36,31 @@ def rename_file(path, old_name, new_name):
 
 def standardized_name(path, filename):
     """ Takes a path and a filename in it and return a string with the new name according to
-    the birth date of filename"""
+    the time of most recent content modification"""
     path_file = os.path.join(path, filename)
     stat = os.stat(path_file)
     extension = path_file.split('.')[-1]
-    creation_time = datetime.fromtimestamp(stat.st_ctime).strftime('%m-%d-%Y_%H:%M:%S')
+    creation_time = datetime.fromtimestamp(stat.st_mtime).strftime('%m-%d-%Y_%H:%M:%S')
     return '{}.{}'.format(creation_time, extension)
-    
+
+def classify_file(filename, categories):
+    """ Classify filename according to its extension.
+    Arguments:
+    ---------
+    categories: dict. The categories as the keys and the extensions the values for each key
+    """
+    extension = filename.split('.')[-1]
+    for category, extensions in categories.items():
+        if extension in extensions:
+            return category
+    return 'other'
+
 
 if __name__ == "__main__":
-    name = standardized_name('.', 'text.txt')
-    rename_file('.', 'text.txt', name)
+    categories = {'images': ['png', 'jpeg'], 'text':['txt']}
+    for directory in categories.keys():
+        print(directory)
+    
+
     
 
